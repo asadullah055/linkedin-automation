@@ -51,8 +51,23 @@ const LinkedInPostForm = () => {
         setLoading(true);
         try {
             const prompt = `Write a professional yet engaging LinkedIn post about "${formData.topic}". 
-Use a warm, authentic tone — start with a hook or insight, include a call to action or reflection. 
-Keep it under 200 words and avoid hashtags unless naturally fitting.`;
+            Role:
+            
+            *Create an attractive *LinkedIn post* about *AI-related topics* (for example: n8n workflows, Make automations, AI voice agents, GPT tools, etc.).
+
+*Instructions:*
+- Start with a *one-line, eye-catching headline* related to the topic.  
+- Write a *medium-length post* (about 100–150 words) that sounds engaging, insightful, and professional — suitable for a LinkedIn audience interested in AI and automation.  
+- End with *a few relevant hashtags* to boost visibility and reach.  
+
+*Example Input:*  
+"How AI voice agents are transforming customer support"
+
+*Example Output:*  
+*Headline:* AI Voice Agents: The Future of Effortless Customer Support  
+*Post:* The days of waiting endlessly on hold are numbered. AI voice agents are revolutionizing how businesses interact with customers — providing instant, accurate, and human-like responses 24/7. By integrating these intelligent systems into workflows, companies can save costs, scale faster, and deliver a superior user experience. The real advantage? Combining automation tools like Make or n8n with AI voice tech creates an ecosystem that learns and improves over time — a true game-changer for modern businesses.  
+*Tags:* #AI #VoiceAgents #Automation #n8n #Make #ArtificialIntelligence #Innovation
+            `;
 
             const res = await client.chat.completions.create({
                 model: "gpt-3.5-turbo",
