@@ -113,7 +113,7 @@ const LinkedInPostForm = () => {
             res.ok
                 ? navigate("/success")
                 : alert("❌ Failed to submit post!");
-        } catch {
+        } catch { 
             alert("⚠️ Network error!");
         }
     };
