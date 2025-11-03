@@ -17,12 +17,14 @@ export default App
  */
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 // import LinkedInForm from "./pages/LinkedInForm";
+import { Toaster } from "react-hot-toast";
 import LinkedInPostForm from "./components/LinkedInPostForm";
 import SuccessPage from "./pages/SuccessPage";
 
 function App() {
   return (
     <Router>
+      <Toaster position="top-center" reverseOrder={false} />
       <Routes>
         <Route path="/" element={<LinkedInPostForm />} />
         <Route path="/success" element={<SuccessPage />} />

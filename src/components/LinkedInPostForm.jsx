@@ -1,6 +1,7 @@
-import { Send, Sparkles, Upload } from "lucide-react";
+import { Loader2, Send, Sparkles, Upload } from "lucide-react";
 import OpenAI from "openai";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const LinkedInPostForm = () => {
@@ -103,21 +104,25 @@ const LinkedInPostForm = () => {
             "https://server3.automationlearners.pro/webhook/18ff0b4d-0480-4d8f-acfc-4a9b43cf9281";
 
         const payload = new FormData();
-        Object.entries(formData).forEach(([key, value]) => {
-            if (value) payload.append(key, value);
-        });
+        Object.entries(formData).forEach(([key, val]) => val && payload.append(key, val));
 
         try {
+            setLoading(true);
             const res = await fetch(webhook, { method: "POST", body: payload });
-            // console.log(res)
-            res.ok
-                ? navigate("/success")
-                : alert("❌ Failed to submit post!");
-        } catch {
-            alert("⚠️ Network error!");
+
+            if (res.ok) {
+                toast.success("Post submitted successfully!");
+
+                setTimeout(() => navigate("/success"), 800);
+            } else {
+                toast.error("Failed to submit post!");
+            }
+        } catch (err) {
+            toast.error("⚠️ Network Error! Please try again.");
+        } finally {
+            setLoading(false);
         }
     };
-
     const isThumbnailInvalid =
         formData.thumbnailImage && formData.thumbnailUrl.length > 0;
 
@@ -383,9 +388,18 @@ const LinkedInPostForm = () => {
 
                 <button
                     type="submit"
-                    className="w-full py-3 rounded-xl flex items-center justify-center gap-2 font-semibold text-white cursor-pointer bg-gradient-to-r from-indigo-500 via-blue-500 to-purple-500 shadow-md hover:shadow-lg hover:opacity-90 transition"
+                    disabled={loading || formData.content.trim() === ""}
+                    className={`w-full py-3 rounded-xl flex items-center justify-center gap-2 font-semibold text-white ${formData.content.trim() === "" ? "cursor-not-allowed" : "cursor-pointer"}  bg-gradient-to-r from-indigo-500 via-blue-500 to-purple-500 shadow-md hover:shadow-lg hover:opacity-90 transition`}
                 >
-                    <Send className="w-5 h-5" /> Submit Post 🚀
+                    {loading ? (
+                        <>
+                            <Loader2 className="animate-spin w-5 h-5" />
+                            <span>Submitting...</span>
+                        </>
+                    ) : (
+                        <span className="inline-flex gap-2 items-center"><Send className="w-5 h-5" /> Submit Post 🚀</span>
+                    )}
+
                 </button>
             </form>
         </div>
