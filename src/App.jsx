@@ -1,4 +1,4 @@
-import LinkedInPostForm from "./components/LinkedInPostForm"
+/* import LinkedInPostForm from "./components/LinkedInPostForm"
 
 function App() {
 
@@ -14,3 +14,21 @@ function App() {
 }
 
 export default App
+ */
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+// import LinkedInForm from "./pages/LinkedInForm";
+import LinkedInPostForm from "./components/LinkedInPostForm";
+import SuccessPage from "./pages/SuccessPage";
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<LinkedInPostForm />} />
+        <Route path="/success" element={<SuccessPage />} />
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;

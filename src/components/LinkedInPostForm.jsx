@@ -1,6 +1,7 @@
 import { Send, Sparkles, Upload } from "lucide-react";
 import OpenAI from "openai";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const LinkedInPostForm = () => {
     const [formData, setFormData] = useState({
@@ -18,7 +19,7 @@ const LinkedInPostForm = () => {
     const [loading, setLoading] = useState(false);
     const [preview, setPreview] = useState(null);
     const [error, setError] = useState("");
-
+    const navigate = useNavigate();
     const handleCheckboxChange = (value) => {
         setFormData((prev) => {
             const updated = prev.profileType.includes(value)
@@ -99,7 +100,7 @@ const LinkedInPostForm = () => {
         }
 
         const webhook =
-            "https://server3.automationlearners.pro/webhook/18ff0b4d-0480-4d8f-acfc-4a9b43cf9281";
+            "https://server3.automationlearners.pro/webhook-test/18ff0b4d-0480-4d8f-acfc-4a9b43cf9281";
 
         const payload = new FormData();
         Object.entries(formData).forEach(([key, value]) => {
@@ -108,8 +109,9 @@ const LinkedInPostForm = () => {
 
         try {
             const res = await fetch(webhook, { method: "POST", body: payload });
+            // console.log(res)
             res.ok
-                ? alert("✅ Post submitted successfully!")
+                ? navigate("/success")
                 : alert("❌ Failed to submit post!");
         } catch {
             alert("⚠️ Network error!");
