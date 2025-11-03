@@ -18,6 +18,8 @@ const LinkedInPostForm = () => {
     });
 
     const [loading, setLoading] = useState(false);
+    const [generating, setGenerating] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
     const [preview, setPreview] = useState(null);
     const [error, setError] = useState("");
     const navigate = useNavigate();
@@ -50,7 +52,7 @@ const LinkedInPostForm = () => {
 
     const generateContent = async () => {
         if (!formData.topic) return;
-        setLoading(true);
+        setGenerating(true);
         try {
             const prompt = `Write a professional yet engaging LinkedIn post about "${formData.topic}". 
             Role:
@@ -69,10 +71,14 @@ const LinkedInPostForm = () => {
 *Headline:* AI Voice Agents: The Future of Effortless Customer Support  
 *Post:* The days of waiting endlessly on hold are numbered. AI voice agents are revolutionizing how businesses interact with customers — providing instant, accurate, and human-like responses 24/7. By integrating these intelligent systems into workflows, companies can save costs, scale faster, and deliver a superior user experience. The real advantage? Combining automation tools like Make or n8n with AI voice tech creates an ecosystem that learns and improves over time — a true game-changer for modern businesses.  
 *Tags:* #AI #VoiceAgents #Automation #n8n #Make #ArtificialIntelligence #Innovation
+
+Important:
+Do not include any labels like “Headline:”, “Post:”, or “Tags:”.
+Only output the final LinkedIn post content — headline, main text, and hashtags together as a natural post.
             `;
 
             const res = await client.chat.completions.create({
-                model: "gpt-3.5-turbo",
+                model: "gpt-4o-mini",
                 messages: [{ role: "user", content: prompt }],
                 temperature: 0.8,
                 max_tokens: 200,
@@ -89,7 +95,7 @@ const LinkedInPostForm = () => {
                 content: "⚠️ Error generating content. Try again later.",
             }));
         } finally {
-            setLoading(false);
+            setGenerating(false);
         }
     };
 
@@ -107,7 +113,7 @@ const LinkedInPostForm = () => {
         Object.entries(formData).forEach(([key, val]) => val && payload.append(key, val));
 
         try {
-            setLoading(true);
+            setSubmitting(true);
             const res = await fetch(webhook, { method: "POST", body: payload });
 
             if (res.ok) {
@@ -120,7 +126,7 @@ const LinkedInPostForm = () => {
         } catch (err) {
             toast.error("⚠️ Network Error! Please try again.");
         } finally {
-            setLoading(false);
+            setSubmitting(false);
         }
     };
     const isThumbnailInvalid =
@@ -276,14 +282,14 @@ const LinkedInPostForm = () => {
                             <button
                                 type="button"
                                 onClick={generateContent}
-                                disabled={!formData.topic || loading}
+                                disabled={!formData.topic || generating}
                                 className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl cursor-pointer text-white font-medium transition ${formData.topic
                                     ? "bg-gradient-to-r from-indigo-500 to-blue-500 hover:opacity-90"
                                     : "bg-gray-300 cursor-not-allowed"
                                     }`}
                             >
                                 <Sparkles className="w-4 h-4" />
-                                {loading ? "Generating..." : "Generate Content ✨"}
+                                {generating ? "Generating..." : "Generate Content ✨"}
                             </button>
 
                             <ThumbnailUploader article={true} />
@@ -361,14 +367,14 @@ const LinkedInPostForm = () => {
                             <button
                                 type="button"
                                 onClick={generateContent}
-                                disabled={!formData.topic || loading}
+                                disabled={!formData.topic || generating}
                                 className={`w-full flex items-center justify-center gap-2 py-3 cursor-pointer rounded-xl text-white font-medium transition ${formData.topic
                                     ? "bg-gradient-to-r from-indigo-500 to-blue-500 hover:opacity-90"
                                     : "bg-gray-300 cursor-not-allowed"
                                     }`}
                             >
                                 <Sparkles className="w-4 h-4" />
-                                {loading ? "Generating..." : "Generate Content ✨"}
+                                {generating ? "Generating..." : "Generate Content ✨"}
                             </button>
                             <label className="block text-gray-700 font-medium">
                                 Video URL
@@ -388,18 +394,20 @@ const LinkedInPostForm = () => {
 
                 <button
                     type="submit"
-                    disabled={loading || formData.content.trim() === ""}
-                    className={`w-full py-3 rounded-xl flex items-center justify-center gap-2 font-semibold text-white ${formData.content.trim() === "" ? "cursor-not-allowed" : "cursor-pointer"}  bg-gradient-to-r from-indigo-500 via-blue-500 to-purple-500 shadow-md hover:shadow-lg hover:opacity-90 transition`}
+                    disabled={submitting || formData.content.trim() === ""}
+                    className={`w-full py-3 rounded-xl flex items-center justify-center gap-2 font-semibold text-white ${formData.content.trim() === "" ? "cursor-not-allowed" : "cursor-pointer"
+                        } bg-gradient-to-r from-indigo-500 via-blue-500 to-purple-500 shadow-md hover:shadow-lg hover:opacity-90 transition`}
                 >
-                    {loading ? (
+                    {submitting ? (
                         <>
                             <Loader2 className="animate-spin w-5 h-5" />
                             <span>Submitting...</span>
                         </>
                     ) : (
-                        <span className="inline-flex gap-2 items-center"><Send className="w-5 h-5" /> Submit Post 🚀</span>
+                        <span className="inline-flex gap-2 items-center">
+                            <Send className="w-5 h-5" /> Submit Post 🚀
+                        </span>
                     )}
-
                 </button>
             </form>
         </div>
