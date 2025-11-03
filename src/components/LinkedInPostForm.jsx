@@ -100,7 +100,7 @@ const LinkedInPostForm = () => {
         }
 
         const webhook =
-            "https://server3.automationlearners.pro/webhook-test/18ff0b4d-0480-4d8f-acfc-4a9b43cf9281";
+            "https://server3.automationlearners.pro/webhook/18ff0b4d-0480-4d8f-acfc-4a9b43cf9281";
 
         const payload = new FormData();
         Object.entries(formData).forEach(([key, value]) => {
@@ -113,7 +113,7 @@ const LinkedInPostForm = () => {
             res.ok
                 ? navigate("/success")
                 : alert("❌ Failed to submit post!");
-        } catch { 
+        } catch {
             alert("⚠️ Network error!");
         }
     };
